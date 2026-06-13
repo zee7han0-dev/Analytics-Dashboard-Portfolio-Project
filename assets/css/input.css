@@ -4,6 +4,7 @@
    ============================================================ */
 
 @import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
 
 /* ------------------------------------------------------------
    CUSTOM THEME TOKENS
@@ -76,15 +77,26 @@ html:not(.dark) .skeleton {
   width: 5px;
   height: 5px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* Light Mode Default Style */
 ::-webkit-scrollbar-thumb {
-  background: theme(colors.zinc.700);
+  background: var(--color-zinc-300); /* Clean light gray */
   border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: theme(colors.zinc.600);
+  background: var(--color-zinc-400);
+}
+
+/* Dark Mode Overrides */
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-zinc-700); /* Dark gray when .dark class is active */
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-zinc-600);
 }
 
 /* ------------------------------------------------------------
@@ -428,4 +440,230 @@ html:not(.dark) .dropdown-item:hover {
 
 html:not(.dark) .chart-loading {
   color: theme(colors.zinc.500);
+}
+
+/* ============================================================
+   ADDITIONS — Settings & Reports views (append to input.css)
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   SETTINGS — inputs & labels
+   ------------------------------------------------------------ */
+.settings-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: theme(colors.zinc.400);
+  margin-bottom: 0.375rem;
+}
+
+.settings-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  border-radius: 0.5rem;
+  background-color: theme(colors.zinc.950);
+  border: 1px solid theme(colors.zinc.800);
+  color: theme(colors.zinc.100);
+  transition: border-color 0.15s;
+}
+
+.settings-input:focus {
+  outline: none;
+  border-color: theme(colors.indigo.500);
+  box-shadow: 0 0 0 1px theme(colors.indigo.500 / 30%);
+}
+
+.settings-save-btn {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  background-color: theme(colors.indigo.600);
+  color: white;
+  transition: background-color 0.15s;
+}
+
+.settings-save-btn:hover {
+  background-color: theme(colors.indigo.500);
+}
+
+/* ------------------------------------------------------------
+   SETTINGS — toggle rows
+   ------------------------------------------------------------ */
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.875rem 0;
+  border-bottom: 1px solid theme(colors.zinc.800);
+}
+
+.settings-row:last-child {
+  border-bottom: none;
+}
+
+.settings-row__title {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: theme(colors.zinc.100);
+}
+
+.settings-row__desc {
+  font-size: 0.75rem;
+  color: theme(colors.zinc.500);
+  margin-top: 0.125rem;
+}
+
+/* Toggle switch */
+.settings-toggle {
+  width: 2.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background-color: theme(colors.zinc.700);
+  position: relative;
+  flex-shrink: 0;
+  transition: background-color 0.2s;
+}
+
+.settings-toggle--on {
+  background-color: theme(colors.indigo.500);
+}
+
+.settings-toggle__dot {
+  position: absolute;
+  top: 0.1875rem;
+  left: 0.1875rem;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 9999px;
+  background-color: white;
+  transition: transform 0.2s;
+}
+
+.settings-toggle--on .settings-toggle__dot {
+  transform: translateX(1rem);
+}
+
+/* ------------------------------------------------------------
+   REPORTS — table
+   ------------------------------------------------------------ */
+.report-row {
+  border-top: 1px solid theme(colors.zinc.800 / 60%);
+  transition: background-color 0.15s;
+}
+
+.report-row:hover {
+  background-color: theme(colors.zinc.800 / 40%);
+}
+
+.report-status {
+  display: inline-block;
+  padding: 0.1875rem 0.625rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  border: 1px solid;
+}
+
+/* ------------------------------------------------------------
+   LIGHT MODE — settings & reports
+   ------------------------------------------------------------ */
+html:not(.dark) .settings-input {
+  background-color: theme(colors.zinc.50);
+  border-color: theme(colors.zinc.200);
+  color: theme(colors.zinc.900);
+}
+
+html:not(.dark) .settings-row__title {
+  color: theme(colors.zinc.900);
+}
+
+html:not(.dark) .settings-row {
+  border-bottom-color: theme(colors.zinc.200);
+}
+
+html:not(.dark) .report-row {
+  border-top-color: theme(colors.zinc.200);
+}
+
+html:not(.dark) .report-row:hover {
+  background-color: theme(colors.zinc.50);
+}
+
+html:not(.dark) .report-row td:first-child {
+  color: theme(colors.zinc.900);
+}
+
+/* ------------------------------------------------------------
+   INTEGRATIONS — toggle switches
+   ------------------------------------------------------------ */
+.integration-toggle {
+  width: 2.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background-color: theme(colors.zinc.700);
+  position: relative;
+  flex-shrink: 0;
+  transition: background-color 0.2s;
+}
+
+.integration-toggle--on {
+  background-color: theme(colors.emerald.500);
+}
+
+.integration-toggle .settings-toggle__dot {
+  position: absolute;
+  top: 0.1875rem;
+  left: 0.1875rem;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 9999px;
+  background-color: white;
+  transition: transform 0.2s;
+}
+
+.integration-toggle--on .settings-toggle__dot {
+  transform: translateX(1rem);
+}
+
+/* ============================================================
+   LIGHT MODE — dynamically injected content
+   ============================================================ */
+
+/* Activity feed & notification items: hardcoded text-zinc-200 */
+html:not(.dark) #activity-feed p.text-zinc-200,
+html:not(.dark) .notif-item p.text-zinc-200 {
+  color: theme(colors.zinc.800);
+}
+
+/* Donut legend (both Overview and Analytics) */
+html:not(.dark) #donut-legend span.text-zinc-100,
+html:not(.dark) #analytics-donut-legend span.text-zinc-100 {
+  color: theme(colors.zinc.900);
+}
+
+html:not(.dark) #donut-legend span.text-zinc-400,
+html:not(.dark) #analytics-donut-legend span.text-zinc-400 {
+  color: theme(colors.zinc.500);
+}
+
+/* Sign-in modal — entirely hardcoded dark, needs full light variant */
+html:not(.dark) #signin-modal > div {
+  background-color: white;
+  border-color: theme(colors.zinc.200);
+}
+
+html:not(.dark) #signin-modal h3 {
+  color: theme(colors.zinc.900);
+}
+
+html:not(.dark) #signin-cancel {
+  background-color: theme(colors.zinc.100);
+  color: theme(colors.zinc.700);
+}
+
+html:not(.dark) #signin-cancel:hover {
+  background-color: theme(colors.zinc.200);
 }

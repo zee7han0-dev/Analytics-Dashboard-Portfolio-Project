@@ -30,6 +30,8 @@ const API = (() => {
 
   // ── State ──────────────────────────────────────────────────
   let lastMarketData = null; // cache for filter re-renders
+  let lastHistoryData = null;
+  let lastHistoryDays = 90;
 
   // ──────────────────────────────────────────────────────────
   // FETCH HELPERS
@@ -257,6 +259,8 @@ const API = (() => {
       ]);
 
       lastMarketData = marketData;
+      lastHistoryData = historyData;
+      lastHistoryDays = days;
 
       // Populate everything
       populateCards(marketData);
@@ -272,6 +276,41 @@ const API = (() => {
       UI.setLoading(false);
       UI.showError(err.message);
     }
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // POPULATE ANALYTICS VIEW  (reuses cached data)
+  // ──────────────────────────────────────────────────────────
+  function populateAnalytics() {
+    if (!lastMarketData || !lastHistoryData) return;
+
+    // Line chart (same data as Overview)
+    const prices = lastHistoryData.prices;
+    if (prices?.length) {
+      const step = Math.max(1, Math.floor(prices.length / 60));
+      const sliced = prices.filter((_, i) => i % step === 0);
+      const labels = sliced.map(([ts]) => formatDateLabel(ts, lastHistoryDays));
+      const values = sliced.map(([, price]) => price);
+      Charts.updateAnalyticsLine(labels, values);
+    }
+
+    // Donut chart (portfolio split, same as Overview)
+    const totalMcap = lastMarketData.reduce(
+      (sum, c) => sum + (c.market_cap || 0),
+      0,
+    );
+    const donutLabels = lastMarketData.map((c) => c.name);
+    const donutPercents = lastMarketData.map(
+      (c) => (c.market_cap / totalMcap) * 100,
+    );
+    Charts.updateAnalyticsDonut(donutLabels, donutPercents);
+
+    // Bar chart (volume by asset, same as Overview)
+    const barLabels = lastMarketData.map(
+      (c) => COIN_LABELS[c.id] || c.symbol.toUpperCase(),
+    );
+    const barVolumes = lastMarketData.map((c) => c.total_volume || 0);
+    Charts.updateAnalyticsBar(barLabels, barVolumes);
   }
 
   // ──────────────────────────────────────────────────────────
@@ -325,6 +364,10 @@ const API = (() => {
     return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }
 
+  function getLastData() {
+    return lastMarketData;
+  }
+
   // ── Public API ─────────────────────────────────────────────
-  return { load, reloadLine };
+  return { load, reloadLine, getLastData, populateAnalytics };
 })();

@@ -12,6 +12,9 @@ const Charts = (() => {
   let lineChart = null;
   let barChart = null;
   let donutChart = null;
+  let analyticsLineChart = null;
+  let analyticsDonutChart = null;
+  let analyticsBarChart = null;
 
   // ── Theme-aware color palette ──────────────────────────────
   function palette() {
@@ -217,6 +220,114 @@ const Charts = (() => {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
+        cutout: "72%",
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` ${ctx.label}: ${ctx.parsed.toFixed(1)}%`,
+            },
+          },
+        },
+        animation: { duration: 700, easing: "easeInOutQuart" },
+      },
+    });
+  }
+  // ──────────────────────────────────────────────────────────
+  // ANALYTICS — LARGE LINE CHART
+  // ──────────────────────────────────────────────────────────
+  function initAnalyticsLine() {
+    const ctx = document.getElementById("analytics-line-chart");
+    if (!ctx) return;
+    const p = palette();
+
+    analyticsLineChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: "Price (USD)",
+            data: [],
+            borderColor: p.indigo,
+            backgroundColor: createGradient(ctx, p.indigo),
+            borderWidth: 2,
+            pointRadius: 0,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: p.indigo,
+            pointHoverBorderColor: "#fff",
+            pointHoverBorderWidth: 2,
+            tension: 0.4,
+            fill: true,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) =>
+                ` $${Number(ctx.parsed.y).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: { color: p.grid, drawBorder: false },
+            ticks: { color: p.tickColor, maxTicksLimit: 10, maxRotation: 0 },
+            border: { display: false },
+          },
+          y: {
+            grid: { color: p.grid, drawBorder: false },
+            ticks: {
+              color: p.tickColor,
+              callback: (v) =>
+                "$" + (v >= 1000 ? (v / 1000).toFixed(1) + "k" : v),
+            },
+            border: { display: false },
+          },
+        },
+        animation: { duration: 600, easing: "easeInOutQuart" },
+      },
+    });
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // ANALYTICS — DONUT CHART
+  // ──────────────────────────────────────────────────────────
+  function initAnalyticsDonut() {
+    const ctx = document.getElementById("analytics-donut-chart");
+    if (!ctx) return;
+    const p = palette();
+
+    analyticsDonutChart = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels: [],
+        datasets: [
+          {
+            data: [],
+            backgroundColor: [
+              p.indigo,
+              p.sky,
+              p.violet,
+              p.emerald,
+              p.rose,
+              p.amber,
+            ],
+            borderColor: "transparent",
+            borderWidth: 0,
+            hoverOffset: 6,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
         maintainAspectRatio: true,
         cutout: "72%",
         plugins: {
@@ -228,6 +339,75 @@ const Charts = (() => {
           },
         },
         animation: { duration: 700, easing: "easeInOutQuart" },
+      },
+    });
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // ANALYTICS — BAR CHART
+  // ──────────────────────────────────────────────────────────
+  function initAnalyticsBar() {
+    const ctx = document.getElementById("analytics-bar-chart");
+    if (!ctx) return;
+    const p = palette();
+
+    analyticsBarChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: "24h Volume (USD)",
+            data: [],
+            backgroundColor: [
+              p.indigo + "cc",
+              p.sky + "cc",
+              p.violet + "cc",
+              p.emerald + "cc",
+              p.rose + "cc",
+              p.amber + "cc",
+            ],
+            borderColor: [
+              p.indigo,
+              p.sky,
+              p.violet,
+              p.emerald,
+              p.rose,
+              p.amber,
+            ],
+            borderWidth: 1,
+            borderRadius: 6,
+            borderSkipped: false,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` $${(ctx.parsed.y / 1e9).toFixed(2)}B`,
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: p.tickColor },
+            border: { display: false },
+          },
+          y: {
+            grid: { color: p.grid, drawBorder: false },
+            ticks: {
+              color: p.tickColor,
+              callback: (v) => "$" + (v / 1e9).toFixed(0) + "B",
+            },
+            border: { display: false },
+          },
+        },
+        animation: { duration: 500, easing: "easeOutQuart" },
       },
     });
   }
@@ -288,13 +468,65 @@ const Charts = (() => {
 
     revealChart("donut-chart", "donut-loading");
     renderDonutLegend(labels, percentages);
+
+    // Force resize after layout fully settles
+    setTimeout(() => {
+      donutChart.resize();
+    }, 350);
+  }
+
+  /**
+   * updateAnalyticsLine(labels[], prices[])
+   */
+  function updateAnalyticsLine(labels, prices) {
+    if (!analyticsLineChart) return;
+    analyticsLineChart.data.labels = labels;
+    analyticsLineChart.data.datasets[0].data = prices;
+    analyticsLineChart.update("active");
+    revealChart("analytics-line-chart", "analytics-line-loading");
+  }
+
+  /**
+   * updateAnalyticsDonut(labels[], percentages[])
+   */
+  function updateAnalyticsDonut(labels, percentages) {
+    if (!analyticsDonutChart) return;
+    analyticsDonutChart.data.labels = labels;
+    analyticsDonutChart.data.datasets[0].data = percentages;
+    analyticsDonutChart.update("active");
+    revealChart("analytics-donut-chart", "analytics-donut-loading");
+    renderDonutLegend(labels, percentages, "analytics-donut-legend");
+  }
+
+  /**
+   * updateAnalyticsBar(labels[], volumes[])
+   */
+  function updateAnalyticsBar(labels, volumes) {
+    if (!analyticsBarChart) return;
+    analyticsBarChart.data.labels = labels;
+    analyticsBarChart.data.datasets[0].data = volumes;
+    analyticsBarChart.update("active");
+    revealChart("analytics-bar-chart", "analytics-bar-loading");
+  }
+
+  /**
+   * initAnalyticsCharts — called once when Analytics view first opens
+   */
+  function initAnalyticsCharts() {
+    if (!analyticsLineChart) initAnalyticsLine();
+    if (!analyticsDonutChart) initAnalyticsDonut();
+    if (!analyticsBarChart) initAnalyticsBar();
   }
 
   // ──────────────────────────────────────────────────────────
   // DONUT LEGEND  (custom HTML legend below chart)
   // ──────────────────────────────────────────────────────────
-  function renderDonutLegend(labels, percentages) {
-    const container = document.getElementById("donut-legend");
+  function renderDonutLegend(
+    labels,
+    percentages,
+    containerId = "donut-legend",
+  ) {
+    const container = document.getElementById(containerId);
     if (!container) return;
 
     const p = palette();
@@ -335,17 +567,6 @@ const Charts = (() => {
     applyGlobalDefaults();
     const p = palette();
 
-    const gridAndTick = {
-      x: {
-        grid: { color: p.grid },
-        ticks: { color: p.tickColor },
-      },
-      y: {
-        grid: { color: p.grid },
-        ticks: { color: p.tickColor },
-      },
-    };
-
     if (lineChart) {
       lineChart.options.scales.x.grid.color = p.grid;
       lineChart.options.scales.x.ticks.color = p.tickColor;
@@ -359,6 +580,29 @@ const Charts = (() => {
       barChart.options.scales.y.grid.color = p.grid;
       barChart.options.scales.y.ticks.color = p.tickColor;
       barChart.update("none");
+    }
+
+    if (analyticsLineChart) {
+      analyticsLineChart.options.scales.x.grid.color = p.grid;
+      analyticsLineChart.options.scales.x.ticks.color = p.tickColor;
+      analyticsLineChart.options.scales.y.grid.color = p.grid;
+      analyticsLineChart.options.scales.y.ticks.color = p.tickColor;
+      analyticsLineChart.update("none");
+    }
+
+    if (analyticsBarChart) {
+      analyticsBarChart.options.scales.x.ticks.color = p.tickColor;
+      analyticsBarChart.options.scales.y.grid.color = p.grid;
+      analyticsBarChart.options.scales.y.ticks.color = p.tickColor;
+      analyticsBarChart.update("none");
+    }
+
+    if (analyticsDonutChart && analyticsDonutChart.data.labels.length) {
+      renderDonutLegend(
+        analyticsDonutChart.data.labels,
+        analyticsDonutChart.data.datasets[0].data,
+        "analytics-donut-legend",
+      );
     }
 
     // Re-render donut legend with new text colors
@@ -389,6 +633,10 @@ const Charts = (() => {
     updateLine,
     updateBar,
     updateDonut,
+    initAnalyticsCharts,
+    updateAnalyticsLine,
+    updateAnalyticsDonut,
+    updateAnalyticsBar,
   };
 })();
 

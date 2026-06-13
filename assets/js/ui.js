@@ -11,7 +11,6 @@
 
 const UI = (() => {
   // ── State ──────────────────────────────────────────────────
-  let isLoading = false;
   let toastTimer = null;
   const notifications = [
     {
@@ -48,7 +47,6 @@ const UI = (() => {
   // LOADING STATE  (refresh button)
   // ──────────────────────────────────────────────────────────
   function setLoading(state) {
-    isLoading = state;
     const btn = document.getElementById("refresh-btn");
     const icon = document.getElementById("refresh-icon");
     if (!btn || !icon) return;
@@ -237,6 +235,29 @@ const UI = (() => {
   }
 
   // ──────────────────────────────────────────────────────────
+  // SIGN-IN MODAL
+  // ──────────────────────────────────────────────────────────
+  function openSignInModal() {
+    const modal = document.getElementById("signin-modal");
+    if (!modal) return;
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+
+    const nameInput = document.getElementById("signin-name");
+    const emailInput = document.getElementById("signin-email");
+    if (nameInput) nameInput.value = "";
+    if (emailInput) emailInput.value = "";
+    nameInput?.focus();
+  }
+
+  function closeSignInModal() {
+    const modal = document.getElementById("signin-modal");
+    if (!modal) return;
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+  }
+
+  // ──────────────────────────────────────────────────────────
   // MOBILE SIDEBAR
   // ──────────────────────────────────────────────────────────
   function toggleSidebar() {
@@ -260,16 +281,24 @@ const UI = (() => {
   // ──────────────────────────────────────────────────────────
   function handleSearch(query) {
     const q = query.toLowerCase().trim();
-    if (!q) return;
 
     // Highlight matching nav links
     document.querySelectorAll(".nav-link").forEach((link) => {
       const text = link.textContent.toLowerCase();
-      if (text.includes(q)) {
+      if (q && text.includes(q)) {
         link.classList.add("ring-1", "ring-indigo-500/50");
       } else {
         link.classList.remove("ring-1", "ring-indigo-500/50");
       }
+    });
+
+    // Filter Recent Activity feed
+    const items = document.querySelectorAll(
+      "#activity-feed > li[data-activity]",
+    );
+    items.forEach((item) => {
+      const text = item.textContent.toLowerCase();
+      item.classList.toggle("hidden", q !== "" && !text.includes(q));
     });
   }
 
@@ -277,6 +306,11 @@ const UI = (() => {
     document.querySelectorAll(".nav-link").forEach((link) => {
       link.classList.remove("ring-1", "ring-indigo-500/50");
     });
+    document
+      .querySelectorAll("#activity-feed > li[data-activity]")
+      .forEach((item) => {
+        item.classList.remove("hidden");
+      });
   }
 
   // ──────────────────────────────────────────────────────────
@@ -284,13 +318,13 @@ const UI = (() => {
   // ──────────────────────────────────────────────────────────
   function exportCSV() {
     const lineCanvas = document.getElementById("line-chart");
-    if (!lineCanvas || !lineCanvas._chart) {
-      // Fallback: export a placeholder message
+    const chart = lineCanvas ? Chart.getChart(lineCanvas) : null;
+
+    if (!chart) {
       showNotification("No data to export yet", "info");
       return;
     }
 
-    const chart = lineCanvas._chart;
     const labels = chart.data.labels;
     const values = chart.data.datasets[0].data;
 
@@ -313,10 +347,19 @@ const UI = (() => {
 
     showNotification("CSV exported successfully", "success");
   }
+
   // ──────────────────────────────────────────────────────────
   // NAV ACTIVE STATE
   // ──────────────────────────────────────────────────────────
-  const ACTIVE_SECTIONS = ["overview"]; // only overview is built
+  const ACTIVE_SECTIONS = [
+    "overview",
+    "analytics",
+    "settings",
+    "reports",
+    "customers",
+    "integrations",
+    "profile",
+  ]; // these have real views
 
   function setActiveNav(section) {
     document.querySelectorAll(".nav-link").forEach((link) => {
@@ -333,8 +376,11 @@ const UI = (() => {
       title.textContent = section.charAt(0).toUpperCase() + section.slice(1);
     }
 
-    // Show toast for unbuilt sections
-    if (!ACTIVE_SECTIONS.includes(section)) {
+    if (ACTIVE_SECTIONS.includes(section)) {
+      // Switch to the real view
+      Views.show(section);
+    } else {
+      // Show toast for unbuilt sections
       showNotification(
         `${section.charAt(0).toUpperCase() + section.slice(1)} — coming soon`,
         "info",
@@ -343,6 +389,7 @@ const UI = (() => {
       setTimeout(() => setActiveNav("overview"), 1500);
     }
   }
+
   // ──────────────────────────────────────────────────────────
   // INIT  — wires all event listeners
   // ──────────────────────────────────────────────────────────
@@ -377,6 +424,72 @@ const UI = (() => {
     // Export button
     document.getElementById("export-btn")?.addEventListener("click", exportCSV);
 
+    // Profile dropdown actions
+    document
+      .querySelectorAll("#user-dropdown .dropdown-item")
+      .forEach((item) => {
+        item.addEventListener("click", (e) => {
+          e.preventDefault();
+
+          if (item.dataset.action === "view-profile") {
+            closeAllDropdowns();
+            setActiveNav("profile");
+            return;
+          }
+
+          if (item.dataset.action === "auth-toggle") {
+            closeAllDropdowns();
+            if (Auth.getUser().isSignedIn) {
+              Auth.signOut();
+              showNotification("Signed out successfully", "info");
+            } else {
+              openSignInModal();
+            }
+            return;
+          }
+
+          const label = item.textContent.trim();
+
+          if (label === "Settings") {
+            closeAllDropdowns();
+            document
+              .querySelector('.nav-link[data-section="settings"]')
+              ?.click();
+            return;
+          }
+
+          const messages = {
+            Billing: "Billing portal will open in a new tab",
+          };
+
+          showNotification(messages[label] || `${label} clicked`, "success");
+          closeAllDropdowns();
+        });
+      });
+
+    // Sign-in modal wiring
+    document
+      .getElementById("signin-cancel")
+      ?.addEventListener("click", closeSignInModal);
+    document.getElementById("signin-submit")?.addEventListener("click", () => {
+      const name = document.getElementById("signin-name")?.value.trim();
+      const email = document.getElementById("signin-email")?.value.trim();
+
+      if (!name) {
+        showNotification("Please enter a name", "error");
+        return;
+      }
+
+      Auth.signIn(name, email);
+      closeSignInModal();
+      showNotification(`Welcome, ${name}!`, "success");
+    });
+
+    // Close modal on backdrop click
+    document.getElementById("signin-modal")?.addEventListener("click", (e) => {
+      if (e.target.id === "signin-modal") closeSignInModal();
+    });
+
     // Search input
     const searchInput = document.getElementById("global-search");
     if (searchInput) {
@@ -392,9 +505,10 @@ const UI = (() => {
           searchInput.focus();
           searchInput.select();
         }
-        // Escape closes dropdowns
+        // Escape closes dropdowns and modal
         if (e.key === "Escape") {
           closeAllDropdowns();
+          closeSignInModal();
           searchInput.blur();
         }
       });
