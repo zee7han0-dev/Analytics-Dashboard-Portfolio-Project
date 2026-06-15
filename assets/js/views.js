@@ -621,17 +621,17 @@ const Views = (() => {
               ${user.initials}
             </div>
             <div>
-              <p class="text-base font-semibold text-zinc-100 dark:text-zinc-100" data-profile-name>${user.name}</p>
+              <p class="text-base font-semibold text-zinc-500 dark:text-zinc-100" data-profile-name>${user.name}</p>
               <p class="text-sm text-zinc-500 mt-0.5" data-profile-role>${user.role}</p>
             </div>
             <div class="w-full pt-4 border-t border-zinc-800 space-y-3 text-left">
               <div class="flex items-center justify-between text-sm">
                 <span class="text-zinc-500">Email</span>
-                <span class="text-zinc-200 font-medium" data-profile-email>${user.email}</span>
+                <span class="text-zinc-500 dark:text-zinc-100 font-medium" data-profile-email>${user.email}</span>
               </div>
               <div class="flex items-center justify-between text-sm">
                 <span class="text-zinc-500">Role</span>
-                <span class="text-zinc-200 font-medium" data-profile-role-2>${user.role}</span>
+                <span class="text-zinc-500 dark:text-zinc-100 font-medium" data-profile-role-2>${user.role}</span>
               </div>
             </div>
             <p class="text-xs text-zinc-500 pt-2">
