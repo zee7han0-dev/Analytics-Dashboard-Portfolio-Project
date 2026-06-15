@@ -212,10 +212,10 @@ const Views = (() => {
                 .map(
                   (r) => `
                 <tr class="report-row">
-                  <td class="px-4 py-3 font-medium text-zinc-100 dark:text-zinc-100">${r.id}</td>
+                  <td class="px-4 py-3 font-medium">${r.id}</td>
                   <td class="px-4 py-3 text-zinc-400">${r.date}</td>
                   <td class="px-4 py-3 text-zinc-400">${r.asset}</td>
-                  <td class="px-4 py-3 text-zinc-200 font-medium">${r.amount}</td>
+                  <td class="px-4 py-3 text-zinc-500 dark:text-zinc-200 font-medium">${r.amount}</td>
                   <td class="px-4 py-3">
                     <span class="report-status ${statusStyles[r.status]}">${r.status}</span>
                   </td>
@@ -466,7 +466,7 @@ const Views = (() => {
                       <div class="flex items-center gap-3">
                         <div class="w-8 h-8 rounded-full ${c.color} flex items-center justify-center text-xs font-semibold text-white shrink-0">${c.initials}</div>
                         <div class="min-w-0">
-                          <p class="font-medium text-zinc-100 dark:text-zinc-100 truncate">${c.name}</p>
+                          <p class="font-medium text-zinc-500 dark:text-zinc-100 truncate">${c.name}</p>
                           <p class="text-xs text-zinc-500 truncate">${c.email}</p>
                         </div>
                       </div>
@@ -475,7 +475,7 @@ const Views = (() => {
                     <td class="px-4 py-3">
                       <span class="report-status ${statusStyles[c.status]}">${c.status}</span>
                     </td>
-                    <td class="px-4 py-3 text-zinc-200 font-medium">${c.spend}</td>
+                    <td class="px-4 py-3 text-zinc-400 dark:text-zinc-200 font-medium">${c.spend}</td>
                   </tr>
                 `,
                   )
@@ -560,7 +560,7 @@ const Views = (() => {
               </button>
             </div>
             <div>
-              <h3 class="text-sm font-semibold text-zinc-100 dark:text-zinc-100">${i.name}</h3>
+              <h3 class="text-sm font-semibold text-zinc-500 dark:text-zinc-100">${i.name}</h3>
               <p class="text-xs text-zinc-500 mt-1 leading-relaxed">${i.desc}</p>
             </div>
             <span class="text-xs font-medium ${i.connected ? "text-emerald-400" : "text-zinc-500"}">

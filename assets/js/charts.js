@@ -462,17 +462,20 @@ const Charts = (() => {
    */
   function updateDonut(labels, percentages) {
     if (!donutChart) return;
+
+    // 1. Clear any active hover or layout animation states currently running
+    donutChart.stop();
+
+    // 2. Set the new data
     donutChart.data.labels = labels;
     donutChart.data.datasets[0].data = percentages;
-    donutChart.update("active");
+
+    // 3. Clear the internal layout cache and trigger a complete canvas re-render
+    donutChart.clear();
+    donutChart.update(); // Remove "active" mode to allow a clean baseline render
 
     revealChart("donut-chart", "donut-loading");
     renderDonutLegend(labels, percentages);
-
-    // Force resize after layout fully settles
-    setTimeout(() => {
-      donutChart.resize();
-    }, 350);
   }
 
   /**

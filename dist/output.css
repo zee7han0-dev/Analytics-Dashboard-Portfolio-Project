@@ -25,7 +25,6 @@
     --color-rose-300: oklch(81% 0.117 11.638);
     --color-rose-400: oklch(71.2% 0.194 13.428);
     --color-rose-500: oklch(64.5% 0.246 16.439);
-    --color-zinc-50: oklch(98.5% 0 0);
     --color-zinc-100: oklch(96.7% 0.001 286.375);
     --color-zinc-200: oklch(92% 0.004 286.32);
     --color-zinc-300: oklch(87.1% 0.006 286.286);
@@ -767,6 +766,9 @@
   .border-zinc-200 {
     border-color: var(--color-zinc-200);
   }
+  .border-zinc-300 {
+    border-color: var(--color-zinc-300);
+  }
   .border-zinc-500 {
     border-color: var(--color-zinc-500);
   }
@@ -889,6 +891,9 @@
   }
   .bg-zinc-100 {
     background-color: var(--color-zinc-100);
+  }
+  .bg-zinc-200 {
+    background-color: var(--color-zinc-200);
   }
   .bg-zinc-500 {
     background-color: var(--color-zinc-500);
@@ -1070,6 +1075,9 @@
   .text-amber-400 {
     color: var(--color-amber-400);
   }
+  .text-black {
+    color: var(--color-black);
+  }
   .text-emerald-300 {
     color: var(--color-emerald-300);
   }
@@ -1238,13 +1246,6 @@
     --tw-ease: var(--ease-in-out);
     transition-timing-function: var(--ease-in-out);
   }
-  .group-hover\:text-zinc-100 {
-    &:is(:where(.group):hover *) {
-      @media (hover: hover) {
-        color: var(--color-zinc-100);
-      }
-    }
-  }
   .placeholder\:text-zinc-500 {
     &::placeholder {
       color: var(--color-zinc-500);
@@ -1260,10 +1261,17 @@
       }
     }
   }
-  .hover\:bg-zinc-50 {
+  .hover\:bg-zinc-100 {
     &:hover {
       @media (hover: hover) {
-        background-color: var(--color-zinc-50);
+        background-color: var(--color-zinc-100);
+      }
+    }
+  }
+  .hover\:bg-zinc-200 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-zinc-200);
       }
     }
   }
@@ -1278,6 +1286,13 @@
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-zinc-800);
+      }
+    }
+  }
+  .hover\:text-black {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-black);
       }
     }
   }
@@ -1306,6 +1321,13 @@
     &:hover {
       @media (hover: hover) {
         color: var(--color-zinc-300);
+      }
+    }
+  }
+  .hover\:text-zinc-900 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-zinc-900);
       }
     }
   }
@@ -1464,16 +1486,30 @@
       color: var(--color-zinc-100);
     }
   }
+  .dark\:text-zinc-200 {
+    &:where(.dark, .dark *) {
+      color: var(--color-zinc-200);
+    }
+  }
   .dark\:text-zinc-400 {
     &:where(.dark, .dark *) {
       color: var(--color-zinc-400);
     }
   }
-  .dark\:hover\:bg-zinc-700 {
+  .dark\:hover\:bg-zinc-800 {
     &:where(.dark, .dark *) {
       &:hover {
         @media (hover: hover) {
-          background-color: var(--color-zinc-700);
+          background-color: var(--color-zinc-800);
+        }
+      }
+    }
+  }
+  .dark\:hover\:text-white {
+    &:where(.dark, .dark *) {
+      &:hover {
+        @media (hover: hover) {
+          color: var(--color-white);
         }
       }
     }

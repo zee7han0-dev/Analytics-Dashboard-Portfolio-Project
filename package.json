@@ -5,6 +5,6 @@
   },
   "scripts": {
     "dev": "npx @tailwindcss/cli -i ./assets/css/input.css -o ./dist/output.css --watch",
-    "build": "npx @tailwindcss/cli -i ./assets/css/input.css -o ./assets/css/output.css --minify"
+    "build": "npx @tailwindcss/cli -i ./assets/css/input.css -o ./dist/output.css --minify"
   }
 }

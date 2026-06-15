@@ -11,7 +11,7 @@ const Auth = (() => {
   const GUEST = {
     name: "Guest",
     email: "",
-    role: "Guest",
+    role: "",
     isSignedIn: false,
   };
 
