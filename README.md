@@ -4,7 +4,7 @@ A modern SaaS-style analytics dashboard built with HTML, CSS, and Vanilla JavaSc
 
 ## Live Demo
 
-https://zee7han0-dev.github.io/Analytics-Dashboard-Protfolio-Project/
+https://zee7han0-dev.github.io/Analytics-Dashboard-Portfolio-Project/
 
 ## Features
 
