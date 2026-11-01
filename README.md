@@ -1,6 +1,6 @@
-# Interactive Analytics Dashboard
+# Analytics Dashboard
 
-A modern SaaS-style analytics dashboard built with HTML, CSS, and Vanilla JavaScript. This project demonstrates responsive design, dynamic data visualization, API integration, dark/light mode, and interactive filtering.
+An interactive analytics dashboard built with HTML, CSS, JavaScript, Tailwind CSS, and Chart.js.
 
 ## Live Demo
 
@@ -14,46 +14,18 @@ https://zee7han0-dev.github.io/Analytics-Dashboard-Portfolio-Project/
 - Analytics overview cards
 - Dark / Light mode toggle
 - LocalStorage theme persistence
-- Dynamic filtering controls
 - Real-time crypto market data
 - Modern SaaS-inspired UI
 - Mobile-friendly design
 - Loading and error states
 
-## Technologies Used
+## Tech Stack
 
 - HTML5
 - CSS3
 - JavaScript (ES6+)
 - Chart.js
 - CoinGecko API
-
-## Dashboard Highlights
-
-### Analytics Overview
-
-- Revenue tracking
-- User statistics
-- Order metrics
-- Conversion rate insights
-
-### Interactive Charts
-
-- Revenue trends
-- Performance analytics
-- Data visualization with Chart.js
-
-### Theme System
-
-- Dark mode
-- Light mode
-- User preference saved using localStorage
-
-### Live Data
-
-- Real-time cryptocurrency market data
-- API integration using async/await
-- Error handling and loading states
 
 ## Screenshots
 
@@ -69,28 +41,15 @@ https://zee7han0-dev.github.io/Analytics-Dashboard-Portfolio-Project/
 
 ![Mobile View](screenshots/mobile-view.png)
 
-## What I Learned
+## Development Background
 
-This project helped me improve my understanding of:
+I built this project with AI assistance while learning web development and exploring AI-assisted software development. Although I know the concepts on which the code works.
 
-- Responsive layouts with CSS Grid and Flexbox
-- JavaScript DOM manipulation
-- Working with APIs using fetch and async/await
-- Data visualization using Chart.js
-- State management with localStorage
-- Building professional dashboard interfaces
-- Creating reusable and maintainable code
+##n What I learned
 
-## Future Improvements
-
-- Export analytics data
-- Advanced filtering options
-- User authentication
-- Additional dashboard modules
-- Backend integration
+Here is what I learned while building this project:
+-I learned to 
 
 ## Author
 
 Zeeshan
-
-Frontend Developer
